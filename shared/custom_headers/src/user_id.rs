@@ -15,7 +15,11 @@ impl FromRequest for UserId {
     fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
         let header = match req.headers().get("X-User-Id") {
             Some(v) => v,
-            None => return ready(Err(actix_web::error::ErrorBadRequest("missing X-User-Id"))),
+            None => {
+                return ready(Err(actix_web::error::ErrorUnauthorized(
+                    "missing X-User-Id",
+                )));
+            }
         };
 
         let s = match header.to_str() {
