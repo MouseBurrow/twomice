@@ -8,4 +8,5 @@ members = [
     "shared/burrow_db",
     "shared/config",
     "shared/custom_headers",
+    "shared/easy_db",
 ]
