@@ -1,9 +1,11 @@
+use crate::app_envs::AppEnvs;
 use std::env;
 
 #[derive(Clone)]
 pub struct Config {
     pub database_url: String,
     pub port: u16,
+    pub app_env: AppEnvs,
 }
 
 impl Config {
@@ -18,6 +20,12 @@ impl Config {
             .parse::<u16>()
             .unwrap_or_else(|_| panic!("PORT must be a u16"));
 
-        Self { database_url, port }
+        let app_env = AppEnvs::get();
+
+        Self {
+            database_url,
+            port,
+            app_env,
+        }
     }
 }
