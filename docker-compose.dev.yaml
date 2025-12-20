@@ -6,7 +6,7 @@ services:
     container_name: auth-service
     restart: unless-stopped
     working_dir: /workspace/services/auth
-    command: cargo watch -x 'run --release'
+    command: cargo watch -x run
     volumes:
       - ./:/workspace
       - cargo-cache:/usr/local/cargo/registry
@@ -22,7 +22,7 @@ services:
     container_name: post-service
     restart: unless-stopped
     working_dir: /workspace/services/post
-    command: cargo watch -x 'run --release'
+    command: cargo watch -x run
     volumes:
       - ./:/workspace
       - cargo-cache:/usr/local/cargo/registry
@@ -38,7 +38,7 @@ services:
     container_name: gateway-service
     restart: unless-stopped
     working_dir: /workspace/services/gateway
-    command: cargo watch -x 'run --release'
+    command: cargo watch -x run
     volumes:
       - ./:/workspace
       - cargo-cache:/usr/local/cargo/registry
