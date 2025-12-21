@@ -4,9 +4,10 @@ services:
       context: .
       dockerfile: services/auth/Dockerfile
     container_name: auth-service
-    restart: always
+    restart: unless-stopped
     environment:
       AUTH_DATABASE_URL: "${AUTH_DATABASE_URL}"
+      APP_ENV: prod
       PORT: 8080
 
   post:
@@ -14,20 +15,23 @@ services:
       context: .
       dockerfile: services/post/Dockerfile
     container_name: post-service
-    restart: always
+    restart: unless-stopped
     environment:
       POST_DATABASE_URL: "${POST_DATABASE_URL}"
+      APP_ENV: prod
       PORT: 8080
 
   gateway:
     build:
       context: .
       dockerfile: services/gateway/Dockerfile
-    restart: always
+    container_name: gateway-service
+    restart: unless-stopped
     environment:
+      APP_ENV: prod
       PORT: 8080
     ports:
-      - "8080:8080"
+      - "3030:8080"
     depends_on:
       - auth
       - post
