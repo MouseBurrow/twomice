@@ -1,12 +1,7 @@
 [workspace]
 resolver = "3"
 members = [
-    "migrator",
-    "services/auth",
-    "services/gateway",
-    "services/post",
-    "shared/burrow_db",
-    "shared/config",
-    "shared/custom_headers",
-    "shared/easy_db",
+    "services/*",
+    "shared/*",
 ]
+exclude = ["migrator"]
