@@ -3,5 +3,6 @@ resolver = "3"
 members = [
     "services/*",
     "shared/*",
+    "migrator",
 ]
-exclude = ["migrator"]
+exclude = []
