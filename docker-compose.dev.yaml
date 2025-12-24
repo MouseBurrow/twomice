@@ -47,9 +47,6 @@ services:
       PORT: 8080
     ports:
       - "3030:8080"
-    depends_on:
-      - auth
-      - post
 volumes:
   cargo-cache:
   target-auth:
