@@ -333,13 +333,11 @@ dependencies = [
  "actix-web",
  "anyhow",
  "argon2",
- "burrow_db",
  "chrono",
  "config",
  "custom_headers",
  "easy_db",
- "env_logger",
- "log",
+ "easy_errors",
  "serde",
  "serde_json",
  "sqlx",
@@ -452,13 +450,6 @@ name = "bumpalo"
 version = "3.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "46c5e41b57b8bba42a04676d81cb89e9ee8e859a1a66f80a5a72e1cb76b34d43"
-
-[[package]]
-name = "burrow_db"
-version = "0.1.0"
-dependencies = [
- "sqlx",
-]
 
 [[package]]
 name = "byteorder"
@@ -724,6 +715,18 @@ version = "0.1.0"
 dependencies = [
  "quote",
  "syn",
+]
+
+[[package]]
+name = "easy_errors"
+version = "0.1.0"
+dependencies = [
+ "actix-web",
+ "log",
+ "serde_json",
+ "sqlx",
+ "strum",
+ "strum_macros",
 ]
 
 [[package]]
@@ -1408,9 +1411,9 @@ dependencies = [
 
 [[package]]
 name = "log"
-version = "0.4.28"
+version = "0.4.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34080505efa8e45a4b816c349525ebe327ceaa8559756f0356cba97ef3bf7432"
+checksum = "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897"
 
 [[package]]
 name = "md-5"
@@ -1697,20 +1700,17 @@ version = "0.1.0"
 dependencies = [
  "actix-web",
  "anyhow",
- "burrow_db",
  "chrono",
  "config",
  "custom_headers",
  "easy_db",
- "env_logger",
- "log",
+ "easy_errors",
  "regex",
  "serde",
  "serde_json",
  "slugify",
  "sqlx",
  "tokio",
- "uuid",
 ]
 
 [[package]]
@@ -2344,6 +2344,27 @@ dependencies = [
  "unicode-bidi",
  "unicode-normalization",
  "unicode-properties",
+]
+
+[[package]]
+name = "strum"
+version = "0.27.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "af23d6f6c1a224baef9d3f61e287d2761385a5b88fdab4eb4c6f11aeb54c4bcf"
+dependencies = [
+ "strum_macros",
+]
+
+[[package]]
+name = "strum_macros"
+version = "0.27.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7695ce3845ea4b33927c055a39dc438a45b059f7c1b3d91d38d10355fb8cbca7"
+dependencies = [
+ "heck",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

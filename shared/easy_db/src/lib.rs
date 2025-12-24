@@ -139,10 +139,10 @@ pub fn db_call(input: TokenStream) -> TokenStream {
                     && let Some(code) = db_err.code().as_deref()
                 {
                     let mapped =
-                        <_ as burrow_db::easy_db_error::DbErrorTrait>::from_code(code);
+                        <_ as easy_errors::DbErrorTrait>::from_code(code);
 
-                    if <_ as burrow_db::easy_db_error::DbErrorTrait>::is_unexpected(&mapped) {
-                        log::error!(
+                    if <_ as easy_errors::DbErrorTrait>::is_unexpected(&mapped) {
+                        easy_errors::log::error!(
                             "UNEXPECTED SQLx ERROR (unmapped CODE {code}): {err:?}"
                         );
                     }
@@ -150,8 +150,8 @@ pub fn db_call(input: TokenStream) -> TokenStream {
                     return mapped;
                 }
 
-                log::error!("UNEXPECTED SQLx ERROR: {err:?}");
-                <_ as burrow_db::easy_db_error::DbErrorTrait>::unexpected(err)
+                easy_errors::log::error!("UNEXPECTED SQLx ERROR: {err:?}");
+                <_ as ::easy_errors::DbErrorTrait>::unexpected(err)
             }
     };
 
