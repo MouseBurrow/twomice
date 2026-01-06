@@ -1,3 +1,4 @@
+use actix_web::cookie::{time, Cookie, SameSite};
 use actix_web::dev::Payload;
 use actix_web::{FromRequest, HttpRequest};
 use sqlx::postgres::{PgArgumentBuffer, PgTypeInfo};
@@ -52,5 +53,17 @@ impl<'q> Encode<'q, Postgres> for SessionToken {
         buf: &mut PgArgumentBuffer,
     ) -> Result<sqlx::encode::IsNull, sqlx::error::BoxDynError> {
         <String as Encode<Postgres>>::encode_by_ref(&self.0, buf)
+    }
+}
+
+impl SessionToken {
+    pub fn create_cookie<'a>(secure: bool, token: String) -> Cookie<'a> {
+        Cookie::build("session_token", token)
+            .http_only(true)
+            .secure(secure)
+            .same_site(SameSite::Lax)
+            .path("/")
+            .max_age(time::Duration::days(30))
+            .finish()
     }
 }
