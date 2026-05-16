@@ -21,3 +21,7 @@ logs/
 
 # REST
 *.rest
+
+# Separate git repos (services, frontend)
+services/*
+frontend/
