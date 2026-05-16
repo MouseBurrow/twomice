@@ -1,18 +1,12 @@
 services:
-  auth-db:
-    extends:
-      file: db/compose.yaml
-      service: auth-db
-
-  post-db:
-    extends:
-      file: db/compose.yaml
-      service: post-db
+  auth-db:    { extends: { file: db/compose.yaml, service: auth-db } }
+  post-db:    { extends: { file: db/compose.yaml, service: post-db } }
+  moderation-db: { extends: { file: db/compose.yaml, service: moderation-db } }
+  social-db:  { extends: { file: db/compose.yaml, service: social-db } }
+  social-feed-db: { extends: { file: db/compose.yaml, service: social-feed-db } }
 
   auth:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
+    build: { context: ., dockerfile: Dockerfile.dev }
     container_name: auth-service
     restart: unless-stopped
     working_dir: /workspace/services/auth
@@ -24,14 +18,10 @@ services:
     environment:
       AUTH_DATABASE_URL: "${AUTH_DATABASE_URL}"
       PORT: 8080
-    depends_on:
-      auth-db:
-        condition: service_healthy
+    depends_on: { auth-db: { condition: service_healthy } }
 
   post:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
+    build: { context: ., dockerfile: Dockerfile.dev }
     container_name: post-service
     restart: unless-stopped
     working_dir: /workspace/services/post
@@ -43,14 +33,55 @@ services:
     environment:
       POST_DATABASE_URL: "${POST_DATABASE_URL}"
       PORT: 8080
-    depends_on:
-      post-db:
-        condition: service_healthy
+    depends_on: { post-db: { condition: service_healthy } }
+
+  moderation:
+    build: { context: ., dockerfile: Dockerfile.dev }
+    container_name: moderation-service
+    restart: unless-stopped
+    working_dir: /workspace/services/moderation
+    command: cargo watch -x run
+    volumes:
+      - ./:/workspace
+      - cargo-cache:/usr/local/cargo/registry
+      - target-moderation:/app/target
+    environment:
+      MODERATION_DATABASE_URL: "${MODERATION_DATABASE_URL}"
+      PORT: 8080
+    depends_on: { moderation-db: { condition: service_healthy } }
+
+  social:
+    build: { context: ., dockerfile: Dockerfile.dev }
+    container_name: social-service
+    restart: unless-stopped
+    working_dir: /workspace/services/social
+    command: cargo watch -x run
+    volumes:
+      - ./:/workspace
+      - cargo-cache:/usr/local/cargo/registry
+      - target-social:/app/target
+    environment:
+      SOCIAL_DATABASE_URL: "${SOCIAL_DATABASE_URL}"
+      PORT: 8080
+    depends_on: { social-db: { condition: service_healthy } }
+
+  social-feed:
+    build: { context: ., dockerfile: Dockerfile.dev }
+    container_name: social-feed-service
+    restart: unless-stopped
+    working_dir: /workspace/services/social-feed
+    command: cargo watch -x run
+    volumes:
+      - ./:/workspace
+      - cargo-cache:/usr/local/cargo/registry
+      - target-social-feed:/app/target
+    environment:
+      FEED_DATABASE_URL: "${FEED_DATABASE_URL}"
+      PORT: 8080
+    depends_on: { social-feed-db: { condition: service_healthy } }
 
   gateway:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
+    build: { context: ., dockerfile: Dockerfile.dev }
     container_name: gateway-service
     restart: unless-stopped
     working_dir: /workspace/services/gateway
@@ -63,11 +94,16 @@ services:
       PORT: 8080
       AUTH_SERVICE_URL: "http://auth:8080"
       POST_SERVICE_URL: "http://post:8080"
-    ports:
-      - "3030:8080"
+      MODERATION_SERVICE_URL: "http://moderation:8080"
+      SOCIAL_SERVICE_URL: "http://social:8080"
+      FEED_SERVICE_URL: "http://social-feed:8080"
+    ports: ["3030:8080"]
 
 volumes:
   cargo-cache:
   target-auth:
   target-post:
+  target-moderation:
+  target-social:
+  target-social-feed:
   target-gateway:

@@ -1,46 +1,62 @@
 services:
-  auth-db:
-    extends:
-      file: db/compose.yaml
-      service: auth-db
-
-  post-db:
-    extends:
-      file: db/compose.yaml
-      service: post-db
+  auth-db:    { extends: { file: db/compose.yaml, service: auth-db } }
+  post-db:    { extends: { file: db/compose.yaml, service: post-db } }
+  moderation-db: { extends: { file: db/compose.yaml, service: moderation-db } }
+  social-db:  { extends: { file: db/compose.yaml, service: social-db } }
+  social-feed-db: { extends: { file: db/compose.yaml, service: social-feed-db } }
 
   auth:
-    build:
-      context: .
-      dockerfile: services/auth/Dockerfile
+    build: { context: ., dockerfile: services/auth/Dockerfile }
     container_name: auth-service
     restart: unless-stopped
     environment:
       AUTH_DATABASE_URL: "${AUTH_DATABASE_URL}"
       APP_ENV: prod
       PORT: 8080
-    depends_on:
-      auth-db:
-        condition: service_healthy
+    depends_on: { auth-db: { condition: service_healthy } }
 
   post:
-    build:
-      context: .
-      dockerfile: services/post/Dockerfile
+    build: { context: ., dockerfile: services/post/Dockerfile }
     container_name: post-service
     restart: unless-stopped
     environment:
       POST_DATABASE_URL: "${POST_DATABASE_URL}"
       APP_ENV: prod
       PORT: 8080
-    depends_on:
-      post-db:
-        condition: service_healthy
+    depends_on: { post-db: { condition: service_healthy } }
+
+  moderation:
+    build: { context: ., dockerfile: services/moderation/Dockerfile }
+    container_name: moderation-service
+    restart: unless-stopped
+    environment:
+      MODERATION_DATABASE_URL: "${MODERATION_DATABASE_URL}"
+      APP_ENV: prod
+      PORT: 8080
+    depends_on: { moderation-db: { condition: service_healthy } }
+
+  social:
+    build: { context: ., dockerfile: services/social/Dockerfile }
+    container_name: social-service
+    restart: unless-stopped
+    environment:
+      SOCIAL_DATABASE_URL: "${SOCIAL_DATABASE_URL}"
+      APP_ENV: prod
+      PORT: 8080
+    depends_on: { social-db: { condition: service_healthy } }
+
+  social-feed:
+    build: { context: ., dockerfile: services/social-feed/Dockerfile }
+    container_name: social-feed-service
+    restart: unless-stopped
+    environment:
+      FEED_DATABASE_URL: "${FEED_DATABASE_URL}"
+      APP_ENV: prod
+      PORT: 8080
+    depends_on: { social-feed-db: { condition: service_healthy } }
 
   gateway:
-    build:
-      context: .
-      dockerfile: services/gateway/Dockerfile
+    build: { context: ., dockerfile: services/gateway/Dockerfile }
     container_name: gateway-service
     restart: unless-stopped
     environment:
@@ -48,5 +64,7 @@ services:
       PORT: 8080
       AUTH_SERVICE_URL: "http://auth:8080"
       POST_SERVICE_URL: "http://post:8080"
-    ports:
-      - "3030:8080"
+      MODERATION_SERVICE_URL: "http://moderation:8080"
+      SOCIAL_SERVICE_URL: "http://social:8080"
+      FEED_SERVICE_URL: "http://social-feed:8080"
+    ports: ["3030:8080"]

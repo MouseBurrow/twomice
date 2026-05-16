@@ -35,6 +35,63 @@ services:
       timeout: 5s
       retries: 5
 
+  moderation-db:
+    image: postgres:16
+    container_name: twomice-moderation-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${MODERATION_DB_USER:-twomice}
+      POSTGRES_PASSWORD: ${MODERATION_DB_PASSWORD:-twomice}
+      POSTGRES_DB: ${MODERATION_DB_NAME:-moderation}
+    ports:
+      - "${MODERATION_DB_PORT:-5434}:5432"
+    volumes:
+      - moderation-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${MODERATION_DB_USER:-twomice} -d ${MODERATION_DB_NAME:-moderation}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  social-db:
+    image: postgres:16
+    container_name: twomice-social-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${SOCIAL_DB_USER:-twomice}
+      POSTGRES_PASSWORD: ${SOCIAL_DB_PASSWORD:-twomice}
+      POSTGRES_DB: ${SOCIAL_DB_NAME:-social}
+    ports:
+      - "${SOCIAL_DB_PORT:-5435}:5432"
+    volumes:
+      - social-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${SOCIAL_DB_USER:-twomice} -d ${SOCIAL_DB_NAME:-social}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  social-feed-db:
+    image: postgres:16
+    container_name: twomice-social-feed-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${FEED_DB_USER:-twomice}
+      POSTGRES_PASSWORD: ${FEED_DB_PASSWORD:-twomice}
+      POSTGRES_DB: ${FEED_DB_NAME:-social_feed}
+    ports:
+      - "${FEED_DB_PORT:-5436}:5432"
+    volumes:
+      - social-feed-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${FEED_DB_USER:-twomice} -d ${FEED_DB_NAME:-social_feed}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   auth-db-data:
   post-db-data:
+  moderation-db-data:
+  social-db-data:
+  social-feed-db-data:

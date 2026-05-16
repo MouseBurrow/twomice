@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-for service in auth post gateway; do
+for service in auth post moderation social social-feed gateway; do
     echo "=== Building $service ==="
     cargo build --manifest-path "services/$service/Cargo.toml" "$@"
     echo ""
