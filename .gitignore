@@ -25,3 +25,4 @@ logs/
 # Separate git repos (services, frontend)
 services/*
 frontend/
+libs/
