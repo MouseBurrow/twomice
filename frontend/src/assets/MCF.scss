@@ -1,0 +1,242 @@
+@use "variables" as *;
+
+/* palette */
+$bg-card: #ffffff;
+$bg-subtle: #f5f5f4;
+
+$stone: #a8a29e;
+$stone-dark: #292524;
+$text-main: #292524;
+$text-muted: #57534e;
+
+$radius-lg: 1.5rem;
+$radius-md: 1.1rem;
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.mcf-page {
+    display: flex;
+    justify-content: center;
+
+    padding: 1.5rem;
+
+    .mcf-board {
+        width: 100%;
+        max-width: 1200px;
+
+        padding: 2rem;
+
+        background: $bg-card;
+        border-radius: $radius-lg;
+        box-shadow: 0 0 4rem rgb(0 0 0 / 18%);
+
+        .mcf-header {
+            margin-bottom: 2rem;
+
+            h1 {
+                margin: 0;
+                font-size: 1.9rem;
+                font-weight: 600;
+                color: $text-main;
+            }
+
+            p {
+                margin-top: 0.25rem;
+                font-size: 0.95rem;
+                color: $text-muted;
+            }
+
+            .mcf-header-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+        }
+
+        .mcf-create {
+            display: flex;
+            flex-direction: column;
+
+            width: fit-content;
+            margin-bottom: 2.5rem;
+
+            padding: 1.25rem;
+
+            background: $bg-subtle;
+            border-radius: $radius-md;
+
+            h2 {
+                margin: 0 0 0.75rem;
+                font-size: 1.05rem;
+                font-weight: 600;
+                color: $text-main;
+            }
+
+            input,
+            textarea {
+                min-width: 30rem;
+
+                margin-top: 0.5rem;
+                padding: 0.75rem;
+
+                border-radius: 0.9rem;
+                border: 1px solid $stone;
+
+                font-size: 0.9rem;
+
+                &:focus {
+                    outline: none;
+                    border-color: $stone-dark;
+                }
+            }
+
+            .mcf-submit {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+
+                margin-top: 0.75rem;
+                padding: 0.75rem;
+
+                width: 100%;
+
+                background: #292524;
+                border-radius: 1rem;
+                box-shadow: 0.25rem 0.25rem 1rem rgb(0 0 0 / 25%);
+                border: none;
+
+                font-size: 0.95rem;
+                font-weight: 600;
+                color: white;
+
+                transition: 0.2s ease;
+                cursor: pointer;
+
+                &:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0.25rem 0.5rem 1.5rem rgb(0 0 0 / 27%);
+                }
+
+                &:active {
+                    transform: translateY(0);
+                    box-shadow: 0.25rem 0.25rem 1rem rgb(0 0 0 / 25%);
+                }
+
+                .mcf-submit-text {
+                    white-space: nowrap;
+
+                    &:disabled {
+                        opacity: 0.7;
+                        cursor: not-allowed;
+                    }
+                }
+
+                .mcf-spinner {
+                    width: 0.9rem;
+                    height: 0.9rem;
+
+                    border: 2px solid rgba(255, 255, 255, 0.4);
+                    border-top-color: white;
+                    border-radius: 50%;
+
+                    animation: spin 0.8s linear infinite;
+                }
+            }
+
+            .mcf-auth-cta {
+                margin-top: 0.75rem;
+
+                padding: 0.75rem;
+                border-radius: 1rem;
+
+                background: #f5f5f4;
+                border: 1px dashed #d6d3d1;
+
+                text-align: center;
+
+                p {
+                    margin: 0 0 0.5rem;
+                    font-size: 0.85rem;
+                    color: #44403c;
+                }
+
+                .mcf-login {
+                    padding: 0.5rem 1rem;
+
+                    background: #292524;
+                    color: white;
+
+                    border: none;
+                    border-radius: 999rem;
+
+                    font-size: 0.85rem;
+                    font-weight: 600;
+
+                    cursor: pointer;
+                    box-shadow: 0 0.4rem 1rem rgb(0 0 0 / 20%);
+
+                    transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+                    &:hover {
+                        transform: translateY(-1px);
+                        box-shadow: 0 0.6rem 1.4rem rgb(0 0 0 / 25%);
+                    }
+
+                    &:active {
+                        transform: translateY(0);
+                        box-shadow: 0 0.3rem 0.8rem rgb(0 0 0 / 20%);
+                    }
+                }
+            }
+        }
+    }
+
+    .mcf-topics {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1rem;
+
+        .mcf-topic {
+            padding: 1rem;
+
+            background: $bg-subtle;
+            border-radius: $radius-md;
+
+            transition: 0.15s ease;
+
+            a {
+                display: block;
+                text-decoration: none;
+                color: inherit;
+            }
+
+            &:hover {
+                background: #e7e5e4;
+            }
+
+            h3 {
+                margin: 0;
+                font-size: 1rem;
+                font-weight: 600;
+                color: $text-main;
+            }
+
+            p {
+                margin: 0.35rem 0 0.5rem;
+                font-size: 0.85rem;
+                color: $text-muted;
+            }
+
+            span {
+                font-size: 0.7rem;
+                color: #78716c;
+            }
+        }
+    }
+}
+

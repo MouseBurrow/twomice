@@ -1,5 +1,5 @@
 .PHONY: build-auth build-post build-moderation build-social build-feed build-gateway build-all
-.PHONY: dev-auth dev-post dev-moderation dev-social dev-feed dev-gateway
+.PHONY: dev-auth dev-post dev-moderation dev-social dev-feed dev-gateway dev-frontend
 .PHONY: db-up db-down db-run db-revert
 
 SERVICES = auth post moderation social social-feed gateway
@@ -21,6 +21,10 @@ dev-moderation:    ; cargo run --manifest-path services/moderation/Cargo.toml
 dev-social:       ; cargo run --manifest-path services/social/Cargo.toml
 dev-feed:         ; cargo run --manifest-path services/social-feed/Cargo.toml
 dev-gateway:      ; cargo run --manifest-path services/gateway/Cargo.toml
+
+# Frontend
+dev-frontend: ; cd frontend && npm run dev
+build-frontend: ; cd frontend && npm run build
 
 # Database
 db-up:    ; docker compose -f db/compose.yaml up -d

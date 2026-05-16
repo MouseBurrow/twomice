@@ -1,0 +1,28 @@
+.auth-status {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+
+    font-size: 0.8rem;
+    color: #57534e;
+
+    button {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.6rem;
+        border: none;
+
+        background: none;
+        color: #292524;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    &.guest span {
+        opacity: 0.7;
+    }
+}

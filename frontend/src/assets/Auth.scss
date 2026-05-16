@@ -1,0 +1,194 @@
+@use "variables" as *;
+
+$card-bg: #fff;
+
+$stone: #a8a29e;
+$dark-stone: #34302e;
+$faded-text: #44403c;
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.auth-card {
+    width: 380px;
+    padding: 24px;
+
+    text-align: center;
+
+    background: $card-bg;
+    border-radius: 1.5rem;
+    box-shadow: 0 1.5rem 3rem rgb(0 0 0 / 20%);
+
+    .tm-header {
+        margin-bottom: 0.75rem;
+
+        // TwoMice text
+        h1 {
+            margin: 0.75rem 0 0.25rem;
+
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: $dark-stone;
+        }
+
+        p {
+            font-size: 0.9rem;
+            color: $faded-text;
+        }
+
+        // Background of mice
+        .tm-mascot {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+
+            position: relative;
+
+            width: 6rem;
+            height: 4rem;
+
+            margin: 0 auto;
+
+            background: #e7e5e4;
+            border-radius: 999rem;
+
+            .tm-mouse {
+                font-size: 1.8rem;
+
+                user-select: none;
+            }
+        }
+    }
+
+    // Inputs
+    .tm-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+
+        margin-top: 1rem;
+
+        .tm-password {
+            position: relative;
+            display: flex;
+            align-items: center;
+
+            input {
+                flex: 1;
+                padding-right: 2.5rem;
+            }
+
+            .tm-peek {
+                position: absolute;
+                right: 0.6rem;
+
+                background: none;
+                border: none;
+                cursor: pointer;
+
+                font-size: 1rem;
+                opacity: 0.7;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+
+        input {
+            padding: 0.8rem;
+
+            border-radius: 1rem;
+            border: 1px solid $stone;
+
+            font-size: 0.975rem;
+
+            &:focus {
+                outline: none;
+                border-color: $dark-stone;
+            }
+        }
+    }
+
+    // Submit button
+    .tm-submit {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+
+        margin-top: 0.5rem;
+        padding: 0.75rem;
+
+        background: #292524;
+        border-radius: 1rem;
+        box-shadow: 0.25rem 0.25rem 1rem rgb(0 0 0 / 25%);
+        border: none;
+
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: white;
+
+        transition: 0.2s ease;
+        cursor: pointer;
+
+        &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0.25rem 0.5rem 1.5rem rgb(0 0 0 / 27%);
+        }
+
+        &:active {
+            transform: translateY(0);
+            box-shadow: 0.25rem 0.25rem 1rem rgb(0 0 0 / 25%);
+        }
+
+        .tm-submit-text {
+            white-space: nowrap;
+
+            &:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+        }
+
+        .tm-spinner {
+            width: 0.9rem;
+            height: 0.9rem;
+
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-top-color: white;
+            border-radius: 50%;
+
+            animation: spin 0.8s linear infinite;
+        }
+    }
+
+    // Footer
+    .tm-footer {
+        margin-top: 1rem;
+
+        font-size: 0.85rem;
+        color: $faded-text;
+
+        button {
+            padding: 0;
+
+            background: none;
+            border: none;
+
+            color: $dark-stone;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
