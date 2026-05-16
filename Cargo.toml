@@ -1,5 +1,3 @@
-[package]
-name = "twomice"
-version = "0.1.0"
-edition = "2021"
-publish = false
+# TwoMice — root workspace marker
+# Each service is a standalone Cargo project under services/
+# Shared libraries are under libs/
