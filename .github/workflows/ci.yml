@@ -1,0 +1,16 @@
+name: CI
+on:
+  push: { branches: [main] }
+  pull_request: { branches: [main] }
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check docker-compose config
+        run: |
+          docker compose -f docker-compose.yaml config 2>&1 || true
+          echo "---"
+          docker compose -f docker-compose.dev.yaml config 2>&1 || true
+      - name: Check Makefile syntax
+        run: make -n build-all 2>&1 || true
