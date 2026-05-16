@@ -10,21 +10,17 @@ DECLARE
     new_account_id    UUID;
     new_session_token TEXT;
 BEGIN
-    -- Create the account
     INSERT INTO accounts (username, password_hash)
     VALUES (p_username, p_password_hash)
     RETURNING id INTO new_account_id;
 
-    -- Generate secure session token
-    SELECT encode(extensions.gen_random_bytes(32), 'hex') INTO new_session_token;
+    SELECT encode(gen_random_bytes(32), 'hex') INTO new_session_token;
 
-    -- Create the session that is connected to the user
     INSERT INTO sessions (account_id, session_token)
     VALUES (new_account_id, new_session_token);
 
     RETURN new_session_token;
 EXCEPTION
-    -- Unique Violation error code is 23505
     WHEN unique_violation THEN
         RAISE EXCEPTION 'Username already exists' USING ERRCODE = '23505';
 END;
@@ -57,7 +53,7 @@ $$
 DECLARE
     new_token TEXT;
 BEGIN
-    SELECT encode(extensions.gen_random_bytes(32), 'hex') INTO new_token;
+    SELECT encode(gen_random_bytes(32), 'hex') INTO new_token;
 
     INSERT INTO sessions (account_id, session_token)
     VALUES (p_account_id, new_token);

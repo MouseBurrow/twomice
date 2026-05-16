@@ -4,26 +4,36 @@ services:
     container_name: twomice-auth-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: twomice
-      POSTGRES_PASSWORD: twomice
-      POSTGRES_DB: auth
+      POSTGRES_USER: ${AUTH_DB_USER:-twomice}
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD:-twomice}
+      POSTGRES_DB: ${AUTH_DB_NAME:-auth}
     ports:
-      - "5432:5432"
+      - "${AUTH_DB_PORT:-5432}:5432"
     volumes:
       - auth-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${AUTH_DB_USER:-twomice} -d ${AUTH_DB_NAME:-auth}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   post-db:
     image: postgres:16
     container_name: twomice-post-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: twomice
-      POSTGRES_PASSWORD: twomice
-      POSTGRES_DB: post
+      POSTGRES_USER: ${POST_DB_USER:-twomice}
+      POSTGRES_PASSWORD: ${POST_DB_PASSWORD:-twomice}
+      POSTGRES_DB: ${POST_DB_NAME:-post}
     ports:
-      - "5433:5432"
+      - "${POST_DB_PORT:-5433}:5432"
     volumes:
       - post-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POST_DB_USER:-twomice} -d ${POST_DB_NAME:-post}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   auth-db-data:

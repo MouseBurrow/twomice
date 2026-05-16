@@ -1,4 +1,14 @@
 services:
+  auth-db:
+    extends:
+      file: db/compose.yaml
+      service: auth-db
+
+  post-db:
+    extends:
+      file: db/compose.yaml
+      service: post-db
+
   auth:
     build:
       context: .
@@ -14,6 +24,9 @@ services:
     environment:
       AUTH_DATABASE_URL: "${AUTH_DATABASE_URL}"
       PORT: 8080
+    depends_on:
+      auth-db:
+        condition: service_healthy
 
   post:
     build:
@@ -30,6 +43,9 @@ services:
     environment:
       POST_DATABASE_URL: "${POST_DATABASE_URL}"
       PORT: 8080
+    depends_on:
+      post-db:
+        condition: service_healthy
 
   gateway:
     build:
@@ -45,8 +61,11 @@ services:
       - target-gateway:/app/target
     environment:
       PORT: 8080
+      AUTH_SERVICE_URL: "http://auth:8080"
+      POST_SERVICE_URL: "http://post:8080"
     ports:
       - "3030:8080"
+
 volumes:
   cargo-cache:
   target-auth:

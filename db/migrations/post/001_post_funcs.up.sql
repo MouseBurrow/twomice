@@ -1,3 +1,14 @@
+CREATE OR REPLACE FUNCTION random_b62_5()
+RETURNS TEXT
+LANGUAGE sql
+AS $$
+    SELECT string_agg(
+        substring('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+            FROM (floor(random() * 62)::int + 1) FOR 1),
+        '')
+    FROM generate_series(1, 5)
+$$;
+
 CREATE OR REPLACE FUNCTION create_topic(
     p_name TEXT,
     p_description TEXT
@@ -88,7 +99,7 @@ BEGIN
     END IF;
 
     LOOP
-        d_final_slug := p_slug || '-' || extensions.random_b62_5();
+        d_final_slug := p_slug || '-' || random_b62_5();
 
         BEGIN
             INSERT INTO posts (creator_id, topic_id, title, slug, content, image_url)
@@ -206,7 +217,7 @@ BEGIN
     END IF;
 
     LOOP
-        d_final_hash := extensions.random_b62_5();
+        d_final_hash := random_b62_5();
 
         BEGIN
             INSERT INTO comments (hash, sender_id, post_id, content)
@@ -295,7 +306,7 @@ BEGIN
 
 
     LOOP
-        final_hash := extensions.random_b62_5();
+        final_hash := random_b62_5();
 
         BEGIN
             INSERT INTO replies (hash, sender_id, post_id, comment_id, content)
@@ -358,5 +369,3 @@ BEGIN
         ORDER BY r.created_at;
 END;
 $$;
-
-

@@ -3,14 +3,6 @@ use std::env;
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 
-fn search_path_for(service: &str) -> &'static str {
-    match service {
-        "auth" => "SET search_path TO auth",
-        "post" => "SET search_path TO post",
-        _ => panic!("Unknown service: {service}"),
-    }
-}
-
 #[derive(Parser)]
 #[command(name = "twomice-db")]
 struct Cli {
