@@ -13,7 +13,9 @@ services:
     volumes: [auth-db-prod-data:/var/lib/postgresql/data]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U twomice -d auth"]
-      interval: 5s, timeout: 5s, retries: 5
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   post-db:
     image: postgres:16
@@ -26,7 +28,9 @@ services:
     volumes: [post-db-prod-data:/var/lib/postgresql/data]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U twomice -d post"]
-      interval: 5s, timeout: 5s, retries: 5
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   moderation-db:
     image: postgres:16
@@ -39,7 +43,9 @@ services:
     volumes: [moderation-db-prod-data:/var/lib/postgresql/data]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U twomice -d moderation"]
-      interval: 5s, timeout: 5s, retries: 5
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   social-db:
     image: postgres:16
@@ -52,7 +58,9 @@ services:
     volumes: [social-db-prod-data:/var/lib/postgresql/data]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U twomice -d social"]
-      interval: 5s, timeout: 5s, retries: 5
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   social-feed-db:
     image: postgres:16
@@ -65,7 +73,9 @@ services:
     volumes: [social-feed-db-prod-data:/var/lib/postgresql/data]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U twomice -d social_feed"]
-      interval: 5s, timeout: 5s, retries: 5
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   gateway:
     ports: ["127.0.0.1:8080:8080"]
