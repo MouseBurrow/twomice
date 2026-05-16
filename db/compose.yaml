@@ -1,0 +1,30 @@
+services:
+  auth-db:
+    image: postgres:16
+    container_name: twomice-auth-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: twomice
+      POSTGRES_PASSWORD: twomice
+      POSTGRES_DB: auth
+    ports:
+      - "5432:5432"
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+
+  post-db:
+    image: postgres:16
+    container_name: twomice-post-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: twomice
+      POSTGRES_PASSWORD: twomice
+      POSTGRES_DB: post
+    ports:
+      - "5433:5432"
+    volumes:
+      - post-db-data:/var/lib/postgresql/data
+
+volumes:
+  auth-db-data:
+  post-db-data:

@@ -1,20 +1,18 @@
 use clap::{Parser, Subcommand};
-use sqlx::postgres::PgPoolOptions;
-use sqlx::Executor;
 use std::env;
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 
-fn get_set_by_service(service: &str) -> &'static str {
+fn search_path_for(service: &str) -> &'static str {
     match service {
         "auth" => "SET search_path TO auth",
-        "post" => "SET search_path TO auth",
-        _ => unreachable!(),
+        "post" => "SET search_path TO post",
+        _ => panic!("Unknown service: {service}"),
     }
 }
 
 #[derive(Parser)]
-#[command(name = "migrate")]
+#[command(name = "twomice-db")]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -37,20 +35,18 @@ async fn main() -> anyhow::Result<()> {
         Commands::Revert { service } => ("revert", service),
     };
 
-    // Construct env variable name dynamically
     let env_var = format!("{}_DATABASE_URL", service.to_uppercase());
     let database_url =
         env::var(&env_var).unwrap_or_else(|_| panic!("Environment variable {} not set", env_var));
-    let pool = PgPoolOptions::new().connect(database_url.as_str()).await?;
-    pool.execute(get_set_by_service(&service)).await?;
 
-    // Run the sqlx command
+    let migrations_dir = format!("db/migrations/{service}");
+
     let mut child = Command::new("sqlx")
         .args([
             "migrate",
             action,
             "--source",
-            &format!("services/{}/migrations", service),
+            &migrations_dir,
             "--database-url",
             &database_url,
         ])
@@ -58,7 +54,6 @@ async fn main() -> anyhow::Result<()> {
         .stderr(Stdio::piped())
         .spawn()?;
 
-    // Capture stdout
     if let Some(stdout) = child.stdout.take() {
         let reader = BufReader::new(stdout);
         for line in reader.lines() {
@@ -66,7 +61,6 @@ async fn main() -> anyhow::Result<()> {
         }
     }
 
-    // Capture stderr
     if let Some(stderr) = child.stderr.take() {
         let reader = BufReader::new(stderr);
         for line in reader.lines() {
