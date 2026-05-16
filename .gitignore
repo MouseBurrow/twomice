@@ -22,7 +22,11 @@ logs/
 # REST
 *.rest
 
-# Separate git repos (services, frontend)
+# Separate git repos (services, frontend, tools)
 services/*
 frontend/
 libs/
+tools/git-dashboard/
+deploy/.env.prod
+deploy/.env.test
+deploy/.env
