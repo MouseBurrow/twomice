@@ -1,0 +1,22 @@
+name: Deploy
+on:
+  push:
+    branches: [main]
+    paths: ["deploy/**"]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync deploy configs
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/twomice
+            git pull origin main
+            docker compose -f deploy/docker-compose.prod.yaml up -d nginx
+            docker compose -f deploy/docker-compose.test.yaml up -d

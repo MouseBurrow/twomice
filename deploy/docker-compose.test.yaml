@@ -1,0 +1,43 @@
+include:
+  - docker-compose.base.yaml
+
+services:
+  auth-db:
+    extends:
+      file: ../db/compose.yaml
+      service: auth-db
+    container_name: twomice-test-auth-db
+    ports: ["127.0.0.1:15432:5432"]
+
+  post-db:
+    extends:
+      file: ../db/compose.yaml
+      service: post-db
+    container_name: twomice-test-post-db
+    ports: ["127.0.0.1:15433:5432"]
+
+  moderation-db:
+    extends:
+      file: ../db/compose.yaml
+      service: moderation-db
+    container_name: twomice-test-moderation-db
+    ports: ["127.0.0.1:15434:5432"]
+
+  social-db:
+    extends:
+      file: ../db/compose.yaml
+      service: social-db
+    container_name: twomice-test-social-db
+    ports: ["127.0.0.1:15435:5432"]
+
+  social-feed-db:
+    extends:
+      file: ../db/compose.yaml
+      service: social-feed-db
+    container_name: twomice-test-social-feed-db
+    ports: ["127.0.0.1:15436:5432"]
+
+  gateway:
+    extends:
+      service: gateway
+    ports: ["127.0.0.1:8081:8080"]

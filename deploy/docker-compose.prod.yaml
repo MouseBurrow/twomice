@@ -1,0 +1,52 @@
+include:
+  - docker-compose.base.yaml
+
+services:
+  auth-db:
+    extends:
+      file: ../db/compose.yaml
+      service: auth-db
+    container_name: twomice-prod-auth-db
+
+  post-db:
+    extends:
+      file: ../db/compose.yaml
+      service: post-db
+    container_name: twomice-prod-post-db
+
+  moderation-db:
+    extends:
+      file: ../db/compose.yaml
+      service: moderation-db
+    container_name: twomice-prod-moderation-db
+
+  social-db:
+    extends:
+      file: ../db/compose.yaml
+      service: social-db
+    container_name: twomice-prod-social-db
+
+  social-feed-db:
+    extends:
+      file: ../db/compose.yaml
+      service: social-feed-db
+    container_name: twomice-prod-social-feed-db
+
+  gateway:
+    extends:
+      service: gateway
+    ports: ["127.0.0.1:8080:8080"]
+
+  frontend:
+    image: ghcr.io/mouseburrow/twomice-frontend:${ENV:-prod-latest}
+    restart: unless-stopped
+    ports: ["127.0.0.1:5173:80"]
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./nginx/twomice.conf:/etc/nginx/conf.d/twomice.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on: [gateway, frontend]
