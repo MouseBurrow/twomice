@@ -1,9 +1,3 @@
-http://twomice.skimnerphi.net {
-    redir /api /api/
-    handle_path /api/** {
-        reverse_proxy gateway:8080
-    }
-    handle {
-        reverse_proxy frontend:80
-    }
+:80 {
+    respond "Caddy is running"
 }
