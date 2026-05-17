@@ -20,5 +20,5 @@ jobs:
             cd /home/admin/twomice
             git pull origin main
             docker pull ghcr.io/mouseburrow/twomice-frontend:${ENV:-test-latest}
-            ENV=prod-latest docker compose -f deploy/docker-compose.prod.yaml up -d nginx
+            ENV=prod-latest docker compose -f deploy/docker-compose.prod.yaml up -d caddy --remove-orphans
             ENV=test-latest docker compose -f deploy/docker-compose.test.yaml up -d
