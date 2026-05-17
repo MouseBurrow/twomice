@@ -88,7 +88,7 @@ services:
   caddy:
     image: caddy:alpine
     restart: unless-stopped
-    ports: ["1918:80", "8080:80"]
+    ports: ["8080:80"]
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
 
