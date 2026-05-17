@@ -81,7 +81,7 @@ services:
     ports: ["127.0.0.1:8080:8080"]
 
   frontend:
-    image: ghcr.io/mouseburrow/twomice-frontend:${ENV:-prod-latest}
+    image: ghcr.io/mouseburrow/twomice-frontend:${ENV:-test-latest}
     restart: unless-stopped
     ports: ["127.0.0.1:5173:80"]
 
