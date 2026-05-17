@@ -1,5 +1,9 @@
 :80 {
-    handle_path /api/** {
+    @api {
+        path /api/*
+    }
+    handle @api {
+        uri strip_prefix /api/
         reverse_proxy gateway:8080
     }
     handle {
