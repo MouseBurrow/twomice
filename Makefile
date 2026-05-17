@@ -1,4 +1,4 @@
-.PHONY: build-auth build-post build-moderation build-social build-feed build-gateway build-all
+.PHONY: build-auth build-post build-moderation build-social build-feed build-gateway build-frontend build-all
 .PHONY: dev-auth dev-post dev-moderation dev-social dev-feed dev-gateway dev-frontend
 .PHONY: db-up db-down db-run db-revert
 
@@ -12,7 +12,7 @@ build-social:     ; cargo build --manifest-path services/social/Cargo.toml
 build-feed:       ; cargo build --manifest-path services/social-feed/Cargo.toml
 build-gateway:    ; cargo build --manifest-path services/gateway/Cargo.toml
 
-build-all: $(addprefix build-,$(SERVICES))
+build-all: $(addprefix build-,$(SERVICES)) build-frontend
 
 # Run individual services
 dev-auth:         ; cargo run --manifest-path services/auth/Cargo.toml

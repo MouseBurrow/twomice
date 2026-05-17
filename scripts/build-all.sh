@@ -6,3 +6,8 @@ for service in auth post moderation social social-feed gateway; do
     cargo build --manifest-path "services/$service/Cargo.toml" "$@"
     echo ""
 done
+
+echo "=== Building frontend ==="
+npm --prefix frontend ci
+npm --prefix frontend run build
+echo ""

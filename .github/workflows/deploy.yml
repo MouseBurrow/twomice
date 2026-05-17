@@ -19,5 +19,6 @@ jobs:
           script: |
             cd /home/admin/twomice
             git pull origin main
+            docker pull ghcr.io/mouseburrow/twomice-frontend:${ENV:-prod-latest}
             docker compose -f deploy/docker-compose.prod.yaml up -d nginx
             docker compose -f deploy/docker-compose.test.yaml up -d
