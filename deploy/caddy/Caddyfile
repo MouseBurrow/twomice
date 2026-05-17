@@ -1,8 +1,8 @@
 :80 {
     handle_path /api/* {
-        respond "{http.request.uri.path}"
+        reverse_proxy gateway:8080
     }
     handle {
-        respond "{http.request.uri.path}"
+        reverse_proxy frontend:80
     }
 }
