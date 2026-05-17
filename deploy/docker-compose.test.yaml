@@ -85,6 +85,11 @@ services:
   gateway:
     ports: ["127.0.0.1:8081:8080"]
 
+  frontend:
+    image: ghcr.io/mouseburrow/twomice-frontend:${ENV:-test-latest}
+    restart: unless-stopped
+    ports: ["127.0.0.1:5174:80"]
+
 volumes:
   auth-db-test-data:
   post-db-test-data:
