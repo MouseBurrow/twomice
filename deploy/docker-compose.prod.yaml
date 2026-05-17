@@ -89,6 +89,8 @@ services:
     image: caddy:alpine
     restart: unless-stopped
     ports: ["8080:80"]
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
 
 volumes:
   auth-db-prod-data:
