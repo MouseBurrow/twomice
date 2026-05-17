@@ -26,6 +26,12 @@ dev-gateway:      ; cargo run --manifest-path services/gateway/Cargo.toml
 dev-frontend: ; cd frontend && npm run dev
 build-frontend: ; cd frontend && npm run build
 
+# Git Dashboard
+.PHONY: dashboard build-dashboard
+
+dashboard:     ; cargo run --manifest-path tools/git-dashboard/Cargo.toml
+build-dashboard:; cargo build --manifest-path tools/git-dashboard/Cargo.toml
+
 # Database
 db-up:    ; docker compose -f db/compose.yaml up -d
 db-down:  ; docker compose -f db/compose.yaml down
