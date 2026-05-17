@@ -89,13 +89,8 @@ services:
     image: caddy:alpine
     restart: unless-stopped
     ports: ["8080:80"]
-    volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy-data:/data
-    depends_on: [gateway, frontend]
 
 volumes:
-  caddy-data:
   auth-db-prod-data:
   post-db-prod-data:
   moderation-db-prod-data:
