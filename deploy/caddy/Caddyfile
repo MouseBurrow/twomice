@@ -1,5 +1,6 @@
 http://twomice.skimnerphi.net {
-    handle_path /api/* {
+    redir /api /api/
+    handle_path /api/** {
         reverse_proxy gateway:8080
     }
     handle {
