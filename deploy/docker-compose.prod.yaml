@@ -91,6 +91,7 @@ services:
     ports: ["8080:80"]
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on: [gateway, frontend]
 
 volumes:
   auth-db-prod-data:
