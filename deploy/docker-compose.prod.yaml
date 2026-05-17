@@ -78,7 +78,7 @@ services:
       retries: 5
 
   gateway:
-    ports: ["127.0.0.1:8080:8080"]
+    # no host port — accessed internally by caddy
 
   frontend:
     image: ghcr.io/mouseburrow/twomice-frontend:${ENV:-test-latest}
