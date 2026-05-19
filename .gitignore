@@ -6,6 +6,11 @@ db/Cargo.lock
 .vscode/
 .idea/
 
+# Claude / AI tooling
+.claude/
+.superpowers/
+docs/
+
 # Environment
 .env
 .env.*
