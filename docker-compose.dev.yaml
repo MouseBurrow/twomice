@@ -16,8 +16,9 @@ services:
       - cargo-cache:/usr/local/cargo/registry
       - target-auth:/app/target
     environment:
-      AUTH_DATABASE_URL: "${AUTH_DATABASE_URL}"
+      AUTH_DATABASE_URL: postgresql://twomice:twomice@auth-db:5432/auth
       PORT: 8080
+      RUST_LOG: info
     depends_on: { auth-db: { condition: service_healthy } }
 
   post:
@@ -31,8 +32,9 @@ services:
       - cargo-cache:/usr/local/cargo/registry
       - target-post:/app/target
     environment:
-      POST_DATABASE_URL: "${POST_DATABASE_URL}"
+      POST_DATABASE_URL: postgresql://twomice:twomice@post-db:5432/post
       PORT: 8080
+      RUST_LOG: info
     depends_on: { post-db: { condition: service_healthy } }
 
   moderation:
@@ -46,8 +48,9 @@ services:
       - cargo-cache:/usr/local/cargo/registry
       - target-moderation:/app/target
     environment:
-      MODERATION_DATABASE_URL: "${MODERATION_DATABASE_URL}"
+      MODERATION_DATABASE_URL: postgresql://twomice:twomice@moderation-db:5432/moderation
       PORT: 8080
+      RUST_LOG: info
     depends_on: { moderation-db: { condition: service_healthy } }
 
   social:
@@ -61,8 +64,9 @@ services:
       - cargo-cache:/usr/local/cargo/registry
       - target-social:/app/target
     environment:
-      SOCIAL_DATABASE_URL: "${SOCIAL_DATABASE_URL}"
+      SOCIAL_DATABASE_URL: postgresql://twomice:twomice@social-db:5432/social
       PORT: 8080
+      RUST_LOG: info
     depends_on: { social-db: { condition: service_healthy } }
 
   social-feed:
@@ -76,8 +80,9 @@ services:
       - cargo-cache:/usr/local/cargo/registry
       - target-social-feed:/app/target
     environment:
-      FEED_DATABASE_URL: "${FEED_DATABASE_URL}"
+      FEED_DATABASE_URL: postgresql://twomice:twomice@social-feed-db:5432/social_feed
       PORT: 8080
+      RUST_LOG: info
     depends_on: { social-feed-db: { condition: service_healthy } }
 
   gateway:
@@ -99,6 +104,42 @@ services:
       FEED_SERVICE_URL: "http://social-feed:8080"
     ports: ["3030:8080"]
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: twomice-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      VITE_API_PROXY: http://gateway:8080
+
+  migrate:
+    build: { context: ., dockerfile: Dockerfile.dev }
+    container_name: twomice-migrate
+    working_dir: /workspace
+    command: bash /workspace/scripts/migrate-all.sh
+    volumes:
+      - ./:/workspace
+      - cargo-cache:/usr/local/cargo/registry
+    environment:
+      AUTH_DATABASE_URL: postgresql://twomice:twomice@auth-db:5432/auth
+      POST_DATABASE_URL: postgresql://twomice:twomice@post-db:5432/post
+      MODERATION_DATABASE_URL: postgresql://twomice:twomice@moderation-db:5432/moderation
+      SOCIAL_DATABASE_URL: postgresql://twomice:twomice@social-db:5432/social
+      FEED_DATABASE_URL: postgresql://twomice:twomice@social-feed-db:5432/social_feed
+    depends_on:
+      auth-db: { condition: service_healthy }
+      post-db: { condition: service_healthy }
+      moderation-db: { condition: service_healthy }
+      social-db: { condition: service_healthy }
+      social-feed-db: { condition: service_healthy }
+    profiles: ["migrate"]
+
 volumes:
   cargo-cache:
   target-auth:
@@ -107,3 +148,8 @@ volumes:
   target-social:
   target-social-feed:
   target-gateway:
+  auth-db-data:
+  post-db-data:
+  moderation-db-data:
+  social-db-data:
+  social-feed-db-data:
