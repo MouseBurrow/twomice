@@ -30,3 +30,4 @@ tools/git-dashboard/
 deploy/.env.prod
 deploy/.env.test
 deploy/.env
+.worktrees/
