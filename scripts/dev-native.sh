@@ -108,6 +108,12 @@ printf "  %-15s" "social-feed"
 sqlx migrate run --source db/migrations/social-feed \
   --database-url "postgresql://twomice:twomice@127.0.0.1:$PGPORT/social_feed" 2>&1 | tail -1
 
+# ── Seed data ──────────────────────────────────────────────────────────────────
+echo "Seeding test data..."
+AUTH_DATABASE_URL="postgresql://twomice:twomice@127.0.0.1:$PGPORT/auth" \
+POST_DATABASE_URL="postgresql://twomice:twomice@127.0.0.1:$PGPORT/post" \
+  cargo run --manifest-path db/Cargo.toml seed 2>&1 | tail -1
+
 # ── Build libs once ──────────────────────────────────────────────────────────
 
 echo "Building shared libs..."
