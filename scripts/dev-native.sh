@@ -3,7 +3,7 @@ set -e
 
 SESSION="twomice"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-PGDATA="/tmp/pgdata"
+PGDATA="$HOME/.local/share/twomice-pgdata"
 PGPORT="5432"
 
 cd "$ROOT"
@@ -58,6 +58,7 @@ if ! pg_isready -h 127.0.0.1 -p "$PGPORT" &>/dev/null; then
 
   if [ ! -d "$PGDATA" ]; then
     echo "  Initializing database cluster..."
+    mkdir -p "$(dirname "$PGDATA")"
     initdb -D "$PGDATA" -U twomice 2>&1 | tail -2
     mkdir -p /tmp/pgsock
   fi
