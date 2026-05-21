@@ -20,6 +20,7 @@ struct Cli {
 enum Commands {
     Run { service: String },
     Revert { service: String },
+    Reset { service: String },
     Seed,
 }
 
@@ -33,13 +34,24 @@ async fn main() -> anyhow::Result<()> {
         Commands::Seed => seed().await?,
         Commands::Run { service } => migrate("run", &service)?,
         Commands::Revert { service } => migrate("revert", &service)?,
+        Commands::Reset { service } => {
+            reset(&service).await?;
+            seed().await?;
+        }
     }
 
     Ok(())
 }
 
+fn database_env_var(service: &str) -> String {
+    match service {
+        "social-feed" => "FEED_DATABASE_URL".into(),
+        _ => format!("{}_DATABASE_URL", service.to_uppercase()),
+    }
+}
+
 fn migrate(action: &str, service: &str) -> anyhow::Result<()> {
-    let env_var = format!("{}_DATABASE_URL", service.to_uppercase());
+    let env_var = database_env_var(service);
     let database_url =
         env::var(&env_var).unwrap_or_else(|_| panic!("Environment variable {} not set", env_var));
 
@@ -80,6 +92,24 @@ fn migrate(action: &str, service: &str) -> anyhow::Result<()> {
     Ok(())
 }
 
+async fn reset(service: &str) -> anyhow::Result<()> {
+    let env_var = database_env_var(service);
+    let database_url =
+        env::var(&env_var).unwrap_or_else(|_| panic!("Environment variable {} not set", env_var));
+
+    let pool = PgPoolOptions::new().connect(&database_url).await?;
+    sqlx::query("DROP SCHEMA IF EXISTS public CASCADE")
+        .execute(&pool)
+        .await?;
+    sqlx::query("CREATE SCHEMA public")
+        .execute(&pool)
+        .await?;
+    pool.close().await;
+
+    println!("Schema dropped and recreated for {service}, running migrations...");
+    migrate("run", service)
+}
+
 async fn seed() -> anyhow::Result<()> {
     let auth_url = env::var("AUTH_DATABASE_URL")
         .unwrap_or_else(|_| "postgresql://twomice:twomice@127.0.0.1:5432/auth".into());
@@ -88,6 +118,16 @@ async fn seed() -> anyhow::Result<()> {
 
     let auth_pool = PgPoolOptions::new().connect(&auth_url).await?;
     let post_pool = PgPoolOptions::new().connect(&post_url).await?;
+
+    let existing: (i64,) = sqlx::query_as(
+        "SELECT COUNT(*) FROM accounts WHERE username IN ('mouse', 'alice', 'bob')",
+    )
+    .fetch_one(&auth_pool)
+    .await?;
+    if existing.0 > 0 {
+        println!("Seed data already exists, skipping.");
+        return Ok(());
+    }
 
     // ── Auth: create test users ────────────────────────────────────────
     let password = "testpass123";
@@ -100,7 +140,7 @@ async fn seed() -> anyhow::Result<()> {
 
     let test_user_id: (Uuid,) = sqlx::query_as(
         "INSERT INTO accounts (username, password_hash) VALUES ('mouse', $1)
-         ON CONFLICT (username) DO UPDATE SET password_hash = $1
+         ON CONFLICT (username) DO NOTHING
          RETURNING id",
     )
     .bind(&hash)
@@ -109,7 +149,7 @@ async fn seed() -> anyhow::Result<()> {
 
     let alice_id: (Uuid,) = sqlx::query_as(
         "INSERT INTO accounts (username, password_hash) VALUES ('alice', $1)
-         ON CONFLICT (username) DO UPDATE SET password_hash = $1
+         ON CONFLICT (username) DO NOTHING
          RETURNING id",
     )
     .bind(&hash)
@@ -118,7 +158,7 @@ async fn seed() -> anyhow::Result<()> {
 
     let bob_id: (Uuid,) = sqlx::query_as(
         "INSERT INTO accounts (username, password_hash) VALUES ('bob', $1)
-         ON CONFLICT (username) DO UPDATE SET password_hash = $1
+         ON CONFLICT (username) DO NOTHING
          RETURNING id",
     )
     .bind(&hash)
@@ -140,7 +180,7 @@ async fn seed() -> anyhow::Result<()> {
     for (name, description) in &topics {
         sqlx::query(
             "INSERT INTO topics (name, description) VALUES ($1, $2)
-             ON CONFLICT (name) DO UPDATE SET description = $2",
+             ON CONFLICT (name) DO NOTHING",
         )
         .bind(name)
         .bind(description)
