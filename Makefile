@@ -1,6 +1,6 @@
 .PHONY: build-auth build-post build-moderation build-social build-feed build-gateway build-frontend build-all
 .PHONY: dev-auth dev-post dev-moderation dev-social dev-feed dev-gateway dev-frontend
-.PHONY: dev migrate db-up db-down db-run db-revert
+.PHONY: dev migrate db-up db-down db-run db-revert db-reset
 .PHONY: dashboard build-dashboard
 
 SERVICES = auth post moderation social social-feed gateway
@@ -65,4 +65,5 @@ db-up:    ; docker compose -f db/compose.yaml up -d
 db-down:  ; docker compose -f db/compose.yaml down
 db-run:   ; docker compose -f docker-compose.dev.yaml --profile migrate run --rm migrate
 db-revert:; cargo run --manifest-path db/Cargo.toml revert
+db-reset: ; cargo run --manifest-path db/Cargo.toml reset
 seed:     ; cargo run --manifest-path db/Cargo.toml seed
