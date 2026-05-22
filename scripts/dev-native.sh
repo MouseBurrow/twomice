@@ -56,11 +56,12 @@ if ! pg_isready -h 127.0.0.1 -p "$PGPORT" &>/dev/null; then
 
   echo "Starting native PostgreSQL..."
 
+  mkdir -p /tmp/pgsock
+
   if [ ! -d "$PGDATA" ]; then
     echo "  Initializing database cluster..."
     mkdir -p "$(dirname "$PGDATA")"
     initdb -D "$PGDATA" -U twomice 2>&1 | tail -2
-    mkdir -p /tmp/pgsock
   fi
 
   # Ensure config has our settings (append only if missing)
