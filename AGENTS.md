@@ -25,6 +25,10 @@ deploy: add Dockerfile, .dockerignore, and Docker CI workflow
 test: add session_token module and easy_errors tests
 ```
 
+## Project Structure
+
+See [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md) for the full architecture, service breakdown, route tables, and file layout.
+
 ## Repos in this project
 
 This is a monorepo of independent git repos. Each has its own origin:
