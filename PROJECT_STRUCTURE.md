@@ -234,13 +234,13 @@ src/
   App.tsx           — Route definitions
   api.ts            — Typed fetch wrapper for all backend endpoints
   apiError.ts       — ApiError class with route, status, code, payload
-  types.ts          — TypeScript types: AuthState, AccountData, TopicData, PostData, CommentData, ReplyData
+  types.ts          — TypeScript types: AuthState, AccountData, BoardData, NibData, SqueakData, EchoData
   pages/
     Auth.tsx        — /auth — Login/Signup
-    MCF.tsx         — / — Home: list of all topics
-    Topic.tsx       — /b/:board — List of posts in a topic
-    Post.tsx        — /b/:board/nib/:post — Post detail with comments + replies
-    CreateNib.tsx   — /b/:board/new — Create new post
+    Home.tsx        — / — Home: list of all boards
+    Board.tsx       — /b/:board — List of nibs in a board
+    Nib.tsx         — /b/:board/nib/:post — Nib detail with squeaks + echoes
+    CreateNib.tsx   — /b/:board/new — Create new nib
     Settings.tsx    — /settings — User settings
     Profile.tsx     — /profile — User profile
   contexts/
@@ -249,9 +249,10 @@ src/
     ToastContext.tsx  — Toast notifications
   components/
     layout/          — Layout.tsx, NavBar.tsx, NavBar.scss
-    mcf/             — Header.tsx, TopicGrid.tsx, TopicCard.tsx, CreateTopicCard.tsx
-    topic/           — TopicHeader.tsx, PostGrid.tsx, PostCard.tsx, CreatePostCard.tsx
-    post/            — PostHeader.tsx, CommentGrid.tsx, CommentCard.tsx, CreateCommentCard.tsx, CreateReplyCard.tsx
+    home/            — Header.tsx, BoardGrid.tsx, BoardCard.tsx, CreateBoardCard.tsx
+    board/           — BoardHeader.tsx, NibGrid.tsx, NibCard.tsx, CreateNibCard.tsx
+    nib/             — NibHeader.tsx, SqueakGrid.tsx, SqueakCard.tsx, CreateSqueakCard.tsx, CreateEchoCard.tsx
+    skeleton/        — SkeletonBoardCard.tsx, SkeletonBoardHeader.tsx, SkeletonNibCard.tsx, SkeletonNibHeader.tsx, SkeletonSqueakCard.tsx, SkeletonVoteColumn.tsx
     shared/          — VoteColumn.tsx (upvote/downvote UI)
     ErrorMessage.tsx
     ToastContainer.tsx
