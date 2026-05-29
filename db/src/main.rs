@@ -4,7 +4,6 @@ use argon2::{
 };
 use clap::{Parser, Subcommand};
 use sqlx::postgres::PgPoolOptions;
-use sqlx::types::Uuid;
 use std::env;
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
@@ -138,7 +137,7 @@ async fn seed() -> anyhow::Result<()> {
         .map_err(|e| anyhow::anyhow!("{}", e))?
         .to_string();
 
-    let test_user_id: (Uuid,) = sqlx::query_as(
+    let test_user_id: (i64,) = sqlx::query_as(
         "INSERT INTO accounts (username, password_hash) VALUES ('mouse', $1)
          ON CONFLICT (username) DO NOTHING
          RETURNING id",
@@ -147,7 +146,7 @@ async fn seed() -> anyhow::Result<()> {
     .fetch_one(&auth_pool)
     .await?;
 
-    let alice_id: (Uuid,) = sqlx::query_as(
+    let alice_id: (i64,) = sqlx::query_as(
         "INSERT INTO accounts (username, password_hash) VALUES ('alice', $1)
          ON CONFLICT (username) DO NOTHING
          RETURNING id",
@@ -156,7 +155,7 @@ async fn seed() -> anyhow::Result<()> {
     .fetch_one(&auth_pool)
     .await?;
 
-    let bob_id: (Uuid,) = sqlx::query_as(
+    let bob_id: (i64,) = sqlx::query_as(
         "INSERT INTO accounts (username, password_hash) VALUES ('bob', $1)
          ON CONFLICT (username) DO NOTHING
          RETURNING id",
@@ -211,7 +210,7 @@ async fn seed() -> anyhow::Result<()> {
             .filter(|c| c.is_ascii_alphanumeric() || *c == '-')
             .collect::<String>();
         let final_slug = format!("{}-{}", slug, &nanoid(5));
-        let topic_id: (Uuid,) = sqlx::query_as("SELECT id FROM topics WHERE name = $1")
+        let topic_id: (i64,) = sqlx::query_as("SELECT id FROM topics WHERE name = $1")
             .bind(topic)
             .fetch_one(&post_pool)
             .await?;
@@ -251,7 +250,7 @@ async fn seed() -> anyhow::Result<()> {
     ];
 
     for (post_title, content, author) in &comments {
-        let post_id: (Uuid,) = sqlx::query_as(
+        let post_id: (i64,) = sqlx::query_as(
             "SELECT id FROM posts WHERE title = $1 LIMIT 1",
         )
         .bind(post_title)
