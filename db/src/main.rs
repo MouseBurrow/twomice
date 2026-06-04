@@ -243,7 +243,7 @@ async fn seed() -> anyhow::Result<()> {
         ),
     ];
 
-    let post_defs: [(&str, &str, &str, i64, Option<Vec<&str>>); 12] = [
+    let post_defs = [
         ("general", "Welcome to TwoMice!", "Hey everyone! Welcome to TwoMice, the coziest corner of the internet. Grab some cheese and make yourself at home. Share your stories, ask questions, and don't forget to squeak hello!", mouse_id, None),
         ("general", "Forum rules and guidelines", "A few ground rules to keep our burrow friendly:\n\n1. Be kind to other mice\n2. No spam or advertising\n3. Keep discussions in the right boards\n4. Have fun!\n\nThat's it. We're pretty chill here.", alice_id, None),
         ("cheese", "Best cheddar I've ever nibbled", "Found this amazing aged cheddar at the farmer's market yesterday. Sharp, crumbly, with those perfect little crystals. 10/10 would nibble again. What's your favorite cheese discovery this month?", bob_id, None),
@@ -759,10 +759,28 @@ async fn seed() -> anyhow::Result<()> {
     println!("── Seed complete ────────────────────────────────");
     println!();
     println!("  auth:        3 users");
-    println!("  post:        {} topics, {} posts, {} comments", topic_list.len(), post_defs.len(), comment_defs.len());
-    println!("               {} replies, {} post votes, {} cmt votes", reply_defs.len(), post_vote_defs.len(), comment_vote_defs.len());
-    println!("  feed:        {} follows, {} preferences", follow_defs.len(), pref_defs.len());
-    println!("  social:      {} friend requests, {} friendships", friend_request_defs.len(), friendship_defs.len());
+    println!(
+        "  post:        {} topics, {} posts, {} comments",
+        topic_list.len(),
+        post_defs.len(),
+        comment_defs.len()
+    );
+    println!(
+        "               {} replies, {} post votes, {} cmt votes",
+        reply_defs.len(),
+        post_vote_defs.len(),
+        comment_vote_defs.len()
+    );
+    println!(
+        "  feed:        {} follows, {} preferences",
+        follow_defs.len(),
+        pref_defs.len()
+    );
+    println!(
+        "  social:      {} friend requests, {} friendships",
+        friend_request_defs.len(),
+        friendship_defs.len()
+    );
     println!("  moderation:  3 reports, 1 action");
     println!();
     println!("  Login: mouse / alice / bob : {password}");
