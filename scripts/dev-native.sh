@@ -109,12 +109,6 @@ printf "  %-15s" "social-feed"
 sqlx migrate run --source db/migrations/social-feed \
   --database-url "postgresql://twomice:twomice@127.0.0.1:$PGPORT/social_feed" 2>&1 | tail -1
 
-# ── Seed data ──────────────────────────────────────────────────────────────────
-echo "Seeding test data..."
-AUTH_DATABASE_URL="postgresql://twomice:twomice@127.0.0.1:$PGPORT/auth" \
-POST_DATABASE_URL="postgresql://twomice:twomice@127.0.0.1:$PGPORT/post" \
-  cargo run --manifest-path db/Cargo.toml seed 2>&1 | tail -1
-
 # ── Build libs once ──────────────────────────────────────────────────────────
 
 echo "Building shared libs..."
@@ -216,6 +210,21 @@ echo "Starting frontend..."
 
 tmux new-window -t "$SESSION" -n "frontend" \
   "cd '$ROOT/frontend' && VITE_API_PROXY='http://localhost:8080' npm run dev || bash"
+
+# ── Seed (last window, stays open so you can scroll back) ─────────────────────
+
+tmux new-window -t "$SESSION" -n "seed" \
+  "echo '── Seeding test data... ──'
+   echo ''
+   AUTH_DATABASE_URL='postgresql://twomice:twomice@127.0.0.1:$PGPORT/auth' \
+   POST_DATABASE_URL='postgresql://twomice:twomice@127.0.0.1:$PGPORT/post' \
+   MODERATION_DATABASE_URL='postgresql://twomice:twomice@127.0.0.1:$PGPORT/moderation' \
+   SOCIAL_DATABASE_URL='postgresql://twomice:twomice@127.0.0.1:$PGPORT/social' \
+   FEED_DATABASE_URL='postgresql://twomice:twomice@127.0.0.1:$PGPORT/social_feed' \
+     cargo run --manifest-path $ROOT/db/Cargo.toml seed
+   echo ''
+   echo '── Press Enter to close this window ──'
+   read _"
 
 # ── Done ──────────────────────────────────────────────────────────────────────
 
