@@ -2,75 +2,82 @@
 
 # TwoMice
 
-> **Live at [twomice.skimnerphi.net](https://twomice.skimnerphi.net)**
+**Anonymous imageboard-style social media — where identity is earned, not assumed.**
+
+[![Live Site](https://img.shields.io/badge/Live%20at-twomice.skimnerphi.net-4f46e5?style=for-the-badge&logoColor=white)](https://twomice.skimnerphi.net)
 
 ![Language](https://img.shields.io/badge/language-Rust-red?logo=rust)
-![License](https://img.shields.io/github/license/TcePrepK/TwoMice)
-![Commits](https://img.shields.io/github/commit-activity/t/TcePrepK/TwoMice)  
-![Last Commit](https://img.shields.io/github/last-commit/TcePrepK/TwoMice)
-![Team](https://img.shields.io/badge/team-TcePrepK%20%7C%20Alaatftin-yellow)
+![License](https://img.shields.io/github/license/MouseBurrow/twomice)
+[![GitHub Org](https://img.shields.io/badge/GitHub-MouseBurrow-181717?logo=github)](https://github.com/MouseBurrow)
+![Team](https://img.shields.io/badge/team-Sylviromi%20%7C%20Alaatftin-yellow)
 
-Anonymous Imageboard-Style Social Media Platform  
-A web-based social media that combines the anonymity and topic-focused discussion of imageboards with friend connectivity. Users remain anonymous to each other until they mutually befriend each other.
 </div>
+
+TwoMice combines the topic-focused discussion of imageboards with a friendship layer that makes identity optional. Everyone is anonymous by default — your profile, username, and post history are invisible until a mutual friend request is accepted by both sides.
 
 ## Features
 
-- ### User System
-    - Username/password accounts with Argon2id password hashing
-    - Profile customization
-    - Friendship system — mutual befriending reveals each other's profile and post history
-- ### Content System
-    - Boards (topics) → Posts → Comments → Replies hierarchy
-    - Upvote/downvote on posts and comments
-    - Soft-delete for posts and comments
-    - Base62 post slugs, pagination on all list endpoints
-- ### Anonymity Layer
-    - Usernames, friend lists, and post histories hidden by default
-    - Profile details revealed only after mutual friendship
-- ### Moderation
-    - Report posts or comments
-    - Moderators can view reports and take actions (mute, ban)
-    - Admin panel with thread lock, post deletion, and moderation log
+<table>
+<tr>
+<td width="50%">
 
-## Project Goals
+**Anonymous by default**
+Usernames, profiles, and post histories are hidden from everyone. You're just another voice in the thread.
 
-- Create an anonymous platform that focuses on topics and conversations without the pressure of popularity or engagement metrics.
-- Enable meaningful interactions while preserving user safety and anonymity by default.
+</td>
+<td width="50%">
+
+**Earned identity**
+Friendship is mutual — only when both sides accept does either person's identity become visible to the other.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**Imageboard structure**
+Boards → Posts → Comments → Replies, with upvotes and downvotes throughout.
+
+</td>
+<td>
+
+**Moderation tools**
+Reports, mutes, bans, thread locks, post deletion, and a full moderation log accessible from an admin panel.
+
+</td>
+</tr>
+</table>
 
 ## Architecture
 
-This project uses a **microservices** architecture. Each service is an independent Rust binary with its own PostgreSQL database. The React frontend talks only to the API gateway, which validates sessions and routes requests.
+Six independent Rust microservices, each with its own PostgreSQL database. The React frontend talks only to the API gateway, which validates sessions and routes requests.
 
-```
-                  ┌──────────────┐
-                  │   Browser    │
-                  │  React SPA   │ (5173 dev / 80 prod)
-                  └──────┬───────┘
-                         │ /api → gateway
-                  ┌──────▼───────┐
-                  │   Gateway    │ (8080)
-                  │   (axum)     │ Session validation + routing
-                  └──┬───┬───┬───┘
-            ┌────────┘   │   └────────────┐
-            ▼            ▼                ▼
-    ┌──────────┐   ┌──────────┐   ┌──────────────┐
-    │   Auth   │   │   Post   │   │  Moderation  │
-    │  (8081)  │   │  (8082)  │   │   (8083)     │
-    └────┬─────┘   └────┬─────┘   └──────┬───────┘
-         │               │                │
-    ┌────▼────┐     ┌────▼────┐     ┌─────▼──────┐
-    │ auth-db │     │ post-db │     │moderation-db│
-    └─────────┘     └─────────┘     └────────────┘
+```mermaid
+graph TD
+    Browser["Browser\nReact SPA\n5173 dev / 80 prod"]
+    Gateway["Gateway (8080)\naxum — session validation + routing"]
+    Auth["Auth (8081)"]
+    Post["Post (8082)"]
+    Mod["Moderation (8083)"]
+    Social["Social (8084)"]
+    Feed["Social Feed (8085)"]
+    auth-db[(auth-db)]
+    post-db[(post-db)]
+    mod-db[(moderation-db)]
+    social-db[(social-db)]
+    feed-db[(social-feed-db)]
 
-            ┌──────────┐     ┌──────────────┐
-            │  Social  │     │  Social Feed │
-            │  (8084)  │     │   (8085)     │
-            └────┬─────┘     └──────┬───────┘
-                 │                   │
-            ┌────▼────┐       ┌─────▼───────┐
-            │social-db│       │social-feed-db│
-            └─────────┘       └─────────────┘
+    Browser -->|"/api → gateway"| Gateway
+    Gateway --> Auth
+    Gateway --> Post
+    Gateway --> Mod
+    Gateway --> Social
+    Gateway --> Feed
+    Auth --> auth-db
+    Post --> post-db
+    Mod --> mod-db
+    Social --> social-db
+    Feed --> feed-db
 ```
 
 | Service | Port | Responsibility |
@@ -82,102 +89,30 @@ This project uses a **microservices** architecture. Each service is an independe
 | `social` | 8084 | Friend requests, friendships |
 | `social-feed` | 8085 | Board follows, personalized feed |
 
-## Technology Stack
+## Stack
+
+<div align="center">
+
+![Rust](https://img.shields.io/badge/Rust-000000?style=flat&logo=rust&logoColor=white)
+![axum](https://img.shields.io/badge/axum-000000?style=flat&logo=rust&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
+![React](https://img.shields.io/badge/React_19-20232A?style=flat&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite_7-646CFF?style=flat&logo=vite&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
+![Caddy](https://img.shields.io/badge/Caddy-00ADD8?style=flat&logo=caddy&logoColor=white)
+
+</div>
 
 | Layer | Technology |
 |---|---|
-| Backend language | Rust |
-| Web framework | axum |
-| Database access | sqlx (compile-time checked queries) |
-| Databases | PostgreSQL (one per service) |
+| Backend | Rust + axum |
+| Database | PostgreSQL — one per service, accessed via sqlx with compile-time checked queries |
 | Frontend | React 19 + TypeScript + Vite 7 |
-| Containerization | Docker + Docker Compose |
-| Reverse proxy | Caddy (prod) / Nginx (alt) |
-| CI/CD | GitHub Actions |
-| Password hashing | Argon2id |
 | IDs | Snowflake BIGINT (distributed-friendly) |
+| Passwords | Argon2id |
+| Deployment | Docker Compose + Caddy + GitHub Actions |
 
 ## Development
 
-Each backend service runs inside its own Docker container. In development, services hot-reload via `cargo-watch`. In production they compile with `--release`.
-
-### Requirements
-
-- Docker and Docker Compose
-- Rust (optional — only needed for native development without Docker)
-- Copy `.env.example` to `.env` and fill in your database URLs
-
-### Running (Docker)
-
-```sh
-docker compose -f docker-compose.dev.yaml up --build
-```
-
-This starts all services, databases, and the frontend dev server. The frontend is available at `http://localhost:5173`.
-
-### Running (Native)
-
-```sh
-make dev-native
-```
-
-Requires tmux. Starts PostgreSQL locally and all services via `cargo-watch`.
-
-### Database Migrations
-
-```sh
-make migrate              # run all pending migrations
-./db run <service>        # migrate a single service
-./db seed                 # seed test data (mouse/alice/bob, password: testpass123)
-```
-
-### Usage
-
-All API traffic goes through `http://localhost:8080` (the gateway). The frontend proxies `/api` to the gateway automatically in dev.
-
-Internal service URLs follow `http://<service-name>:8080` within Docker networking. These are never exposed directly.
-
-### Session Handling
-
-Each user gets a session token on login, stored as an HTTP-only cookie. Every request to the gateway is validated against this token before being forwarded.
-
-```
-Request comes in
-└─> Check cookie
-    ├─ missing         → return 401
-    └─ present
-       ├─ check cache  → valid   → continue
-       ├─ check cache  → invalid → return 401
-       └─ not in cache → call auth service /validate
-          ├─ success   → cache (1hr TTL) and continue
-          └─ error     → return 401
-```
-
-## Repository Structure
-
-Each service lives in its own git repository under the monorepo layout:
-
-| Directory | Repo |
-|---|---|
-| `./` | twomice (root / monorepo) |
-| `frontend/` | twomice-frontend |
-| `libs/` | twomice-libs (shared Rust crates) |
-| `services/auth/` | twomice-auth |
-| `services/gateway/` | twomice-gateway |
-| `services/post/` | twomice-post |
-| `services/moderation/` | twomice-moderation |
-| `services/social/` | twomice-social |
-| `services/social-feed/` | twomice-social-feed |
-| `tools/git-dashboard/` | twomice-dashboard |
-
-Shared Rust libraries (`config`, `custom_headers`, `easy_errors`, `utils`) are consumed as git dependencies from `twomice-libs`.
-
-## Deployment
-
-Production deployment uses Docker Compose with Caddy as the reverse proxy. A GitHub Actions workflow triggers an SSH deploy on pushes to `main` when files under `deploy/` change.
-
-```sh
-./deploy/deploy.sh <service> prod   # deploy a single service
-```
-
-The live instance is hosted at **[twomice.skimnerphi.net](https://twomice.skimnerphi.net)**.
+See [DEVELOPMENT.md](DEVELOPMENT.md) for setup instructions, running locally, database migrations, and deployment.
