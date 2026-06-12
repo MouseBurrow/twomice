@@ -1,8 +1,7 @@
 name: Deploy
 on:
   push:
-    branches: [main]
-    paths: ["deploy/**"]
+    tags: ['v*']
 
 jobs:
   sync:
