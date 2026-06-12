@@ -34,4 +34,3 @@ jobs:
         run: ./run_tests.sh
         env:
           DB_HOST: postgres
-          POST_DATABASE_URL: postgresql://twomice:twomice@postgres:5432/post
