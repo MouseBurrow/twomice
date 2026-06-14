@@ -1,0 +1,18 @@
+#!/bin/sh
+set -e
+
+CHANGED_FILES=$(git diff --cached --name-only)
+
+HAS_FRONTEND=0
+for f in $CHANGED_FILES; do
+  case "$f" in
+    frontend/*) HAS_FRONTEND=1; break ;;
+  esac
+done
+
+if [ "$HAS_FRONTEND" = "1" ]; then
+  echo "=== Frontend checks ==="
+  (cd frontend && npm run lint && npx tsc -b) || exit $?
+fi
+
+echo "=== All checks passed ==="
