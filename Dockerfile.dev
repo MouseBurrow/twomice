@@ -1,4 +1,0 @@
-FROM rust:1.91 AS builder
-WORKDIR /app
-
-RUN cargo install cargo-watch sqlx-cli
