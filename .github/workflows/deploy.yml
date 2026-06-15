@@ -7,17 +7,24 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Sync deploy configs
+      - name: Deploy
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-           script: |
+          command_timeout: 30m
+          script: |
+            TAG="${{ github.ref_name }}"
             cd /home/admin/twomice
-            git pull origin main
+
+            # Checkout the tagged commit (parent repo for compose configs)
+            git fetch --tags origin
+            git stash
+            git checkout "$TAG"
+
+            # Write production env
             mkdir -p deploy
             echo "ENV=prod-latest" > deploy/.env
             echo "APP_ENV=prod" >> deploy/.env
@@ -31,6 +38,9 @@ jobs:
             echo "MODERATION_DATABASE_URL=postgresql://twomice:${{ secrets.MODERATION_DB_PASSWORD }}@moderation-db:5432/moderation" >> deploy/.env
             echo "SOCIAL_DATABASE_URL=postgresql://twomice:${{ secrets.SOCIAL_DB_PASSWORD }}@social-db:5432/social" >> deploy/.env
             echo "FEED_DATABASE_URL=postgresql://twomice:${{ secrets.FEED_DB_PASSWORD }}@social-feed-db:5432/social_feed" >> deploy/.env
-            docker pull ghcr.io/mouseburrow/twomice-frontend:${ENV:-test-latest}
-            ENV=prod-latest docker compose -f deploy/docker-compose.prod.yaml up -d caddy --remove-orphans
-            ENV=test-latest docker compose -f deploy/docker-compose.test.yaml up -d
+
+            # Pull all latest images (built by per-service Docker workflows)
+            docker compose -f deploy/docker-compose.prod.yaml pull
+
+            # Restart Caddy (reverse proxy config may have changed)
+            docker compose -f deploy/docker-compose.prod.yaml up -d caddy --remove-orphans

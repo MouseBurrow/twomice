@@ -32,5 +32,7 @@ jobs:
       - name: Run post service tests
         working-directory: services/post
         run: ./run_tests.sh
-        env:
-          DB_HOST: postgres
+
+      - name: Run auth service tests
+        working-directory: services/auth
+        run: ./run_tests.sh
