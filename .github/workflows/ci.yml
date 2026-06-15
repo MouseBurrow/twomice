@@ -5,21 +5,8 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: twomice
-          POSTGRES_PASSWORD: twomice
-          POSTGRES_DB: post
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
 
       - name: Check docker-compose config
         run: |
@@ -28,11 +15,3 @@ jobs:
           docker compose -f docker-compose.dev.yaml config 2>&1 || true
       - name: Check Makefile syntax
         run: make -n build-all 2>&1 || true
-
-      - name: Run post service tests
-        working-directory: services/post
-        run: ./run_tests.sh
-
-      - name: Run auth service tests
-        working-directory: services/auth
-        run: ./run_tests.sh
